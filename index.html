@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tamil Nadu Monopoly</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Mulish:wght@300;400;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06060f;--bg2:#0e0e1c;--bg3:#16162a;--bg4:#1e1e36;
+  --gold:#f2c94c;--gold2:#d4a017;--gold3:#fff3c0;
+  --red:#e55;--green:#3c9;--blue:#48f;--purple:#a06ee0;--teal:#2dd;--orange:#f80;--pink:#e5a;
+  --text:#f0ede4;--muted:#7a7880;--border:#222238;
+  --r:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Mulish',sans-serif;min-height:100vh;overflow:hidden}
+
+/* ══════════════ SCREENS ══════════════ */
+.screen{display:none;width:100%;height:100vh}
+.screen.active{display:flex}
+
+/* ══════════════ LOBBY ══════════════ */
+#s-lobby{flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 0%,#1a0e3a 0%,var(--bg) 65%);padding:20px;overflow-y:auto}
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-tamil{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(32px,7vw,64px);color:var(--gold);letter-spacing:-1px;line-height:1;text-shadow:0 0 40px rgba(242,201,76,.3)}
+.logo-sub{font-size:13px;color:var(--muted);letter-spacing:4px;text-transform:uppercase;margin-top:6px}
+.logo-tamilscript{font-size:16px;color:var(--gold2);letter-spacing:2px;margin-top:4px;opacity:.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;width:100%;max-width:440px}
+.tabs{display:flex;gap:6px;margin-bottom:24px;background:var(--bg3);padding:4px;border-radius:10px}
+.tab{flex:1;padding:9px;border-radius:7px;border:none;background:transparent;color:var(--muted);font-family:'Mulish',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.tab.on{background:var(--gold);color:#1a0a00}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Mulish',sans-serif;font-size:14px;outline:none;transition:border .2s}
+.field input:focus{border-color:var(--gold)}
+.note{font-size:11px;color:var(--muted);background:var(--bg3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:16px;line-height:1.6}
+.btn{padding:12px 20px;border:none;border-radius:9px;font-family:'Mulish',sans-serif;font-weight:800;font-size:14px;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.btn-full{width:100%}
+.btn-gold{background:var(--gold);color:#1a0a00}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);margin-top:8px}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:#3a1010;border:1px solid var(--red);color:var(--red)}
+.btn-danger:hover{background:#4a1515}
+.btn-green{background:#0a2a18;border:1px solid var(--green);color:var(--green)}
+.btn-green:hover{background:#0f3822}
+.code-box{background:var(--bg3);border:2px solid var(--gold);border-radius:12px;padding:14px;text-align:center;margin-bottom:14px}
+.code-big{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--gold);letter-spacing:6px}
+.code-hint{font-size:11px;color:var(--muted);margin-top:3px}
+.plist{list-style:none;margin-bottom:12px}
+.plist li{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border-radius:8px;margin-bottom:5px;font-size:13px}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.plist li .htag{margin-left:auto;font-size:9px;background:var(--gold);color:#1a0a00;padding:2px 7px;border-radius:4px;font-weight:800;letter-spacing:.5px}
+.plist li .rtag{font-size:10px;color:var(--muted);margin-left:4px}
+.waiting{opacity:.28;font-style:italic}
+.tc{display:none}.tc.on{display:block}
+
+/* ══════════════ ROLE REVEAL ══════════════ */
+#s-rolereveal{flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,#1a0840 0%,var(--bg) 70%)}
+.rr-wrap{text-align:center;max-width:380px;padding:24px;animation:rReveal .6s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rReveal{from{transform:scale(.7) rotateY(90deg);opacity:0}to{transform:scale(1) rotateY(0);opacity:1}}
+.rr-badge{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.rr-icon{font-size:64px;margin-bottom:12px;filter:drop-shadow(0 0 20px rgba(242,201,76,.4))}
+.rr-name{font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--gold);margin-bottom:8px}
+.rr-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.rr-power{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:20px}
+.rr-power-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold2);margin-bottom:6px}
+.rr-power-text{font-size:13px;font-weight:600;line-height:1.5}
+.rr-bonus{font-size:11px;color:var(--muted);margin-top:6px}
+.rr-players{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:20px}
+.rr-player-chip{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px}
+.rr-dot{width:8px;height:8px;border-radius:50%}
+
+/* ══════════════ GAME LAYOUT ══════════════ */
+#s-game{flex-direction:column;overflow:hidden}
+.ghead{background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px}
+.ghead-logo{font-family:'Cinzel',serif;font-weight:700;font-size:14px;color:var(--gold)}
+.ghead-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center;flex-wrap:wrap}
+.chip{font-size:11px;background:var(--bg3);border:1px solid var(--border);padding:3px 10px;border-radius:20px;color:var(--muted);white-space:nowrap}
+.chip.gold{color:var(--gold);border-color:var(--gold2)}
+.chip.green{color:var(--green);border-color:#1a4030}
+.gbody{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* Board */
+.bwrap{flex:1;overflow:auto;padding:8px;display:flex;align-items:flex-start;justify-content:center}
+.board{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;width:100%;min-width:540px;max-width:860px}
+.tile{border-radius:5px;padding:4px 5px;cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative;min-height:58px;display:flex;flex-direction:column;border:1.5px solid transparent}
+.tile:hover{transform:scale(1.06);z-index:10}
+.tile.hl-me{border-color:var(--gold)!important;box-shadow:inset 0 0 0 1px var(--gold)}
+.tile.hl-cur{box-shadow:0 0 0 2px #fff,0 0 12px 2px var(--gold);z-index:20}
+.tile.hl-sel{box-shadow:0 0 0 2px var(--blue),0 0 10px 1px var(--blue);z-index:15}
+.tname{font-size:8.5px;font-weight:700;line-height:1.2;word-break:break-word;flex:1}
+.tprice{font-size:7.5px;color:rgba(255,255,255,.4);margin-top:1px}
+.tlvl{display:flex;gap:1px;margin-top:2px}
+.tlvl-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.3}
+.tlvl-dot.on{opacity:1}
+.tfoot{display:flex;align-items:center;gap:2px;margin-top:2px}
+.townerdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tplayers{display:flex;gap:1px;flex-wrap:wrap}
+.tp{width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+/* zone bg */
+.z0{background:#101d2e;border-color:#1a3050}
+.z1{background:#101e14;border-color:#1a4020}
+.z2{background:#1e1a0c;border-color:#503a10}
+.z3{background:#180f22;border-color:#3a1a50}
+.z4{background:#1e0f0f;border-color:#501818}
+.z5{background:#0f1a1e;border-color:#185060}
+.z6{background:#180f18;border-color:#501840}
+.z7{background:#0f0f1e;border-color:#202060}
+.z8{background:#171a0c;border-color:#404010}
+.z9{background:#0f1818;border-color:#184040}
+.z10{background:#0f1320;border-color:#182850}
+.z11{background:#1e0f14;border-color:#502030}
+.sp{background:#181408;border-color:#503a08}
+.corner-t{background:#080814;border-color:#2020a0;min-height:72px}
+
+/* Sidebar */
+.side{width:252px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.stabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.stab{flex:1;padding:8px 4px;font-size:10px;font-weight:800;text-align:center;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.5px;text-transform:uppercase}
+.stab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.spanel{display:none;flex-direction:column;overflow-y:auto;flex:1;padding:10px;gap:6px}
+.spanel.on{display:flex}
+
+/* Player cards */
+.pc{background:var(--bg3);border-radius:10px;padding:10px;border:1px solid var(--border);flex-shrink:0}
+.pc.myturn{border-color:var(--gold)}
+.pc.mine{border-color:var(--blue)}
+.pc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pc-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.pc-n{font-size:13px;font-weight:700}
+.pc-r{font-size:10px;color:var(--muted)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.pstat{background:var(--bg2);border-radius:6px;padding:5px 7px}
+.psl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.psv{font-size:12px;font-weight:800;margin-top:1px}
+.psv.g{color:var(--green)}.psv.r{color:var(--red)}.psv.o{color:var(--gold)}
+.badge{font-size:9px;padding:2px 7px;border-radius:4px;font-weight:800;margin-top:5px;display:inline-block;letter-spacing:.5px}
+.b-dom{background:#352800;color:var(--gold)}.b-risk{background:#2a0a0a;color:var(--red)}
+.b-grow{background:#0a1a28;color:var(--blue)}.b-ok{background:#0a2014;color:var(--green)}
+.b-bank{background:#2a0a2a;color:var(--purple)}
+
+/* Actions panel */
+.apanel{background:var(--bg3);border-radius:10px;padding:10px;flex-shrink:0}
+.apanel h3{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:800}
+.abtn{width:100%;padding:9px 10px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Mulish',sans-serif;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:4px;transition:all .12s;text-align:left;display:flex;align-items:center;gap:6px}
+.abtn:hover:not(:disabled){background:var(--bg4);transform:translateX(2px)}
+.abtn:disabled{opacity:.28;cursor:not-allowed}
+.abtn.primary{background:var(--gold);color:#1a0a00;border-color:var(--gold)}
+.abtn.primary:hover:not(:disabled){background:var(--gold2)}
+.abtn.red{border-color:var(--red);color:var(--red)}
+.abtn.red:hover:not(:disabled){background:#2a0a0a}
+.abtn.green{border-color:var(--green);color:var(--green)}
+.abtn.green:hover:not(:disabled){background:#0a2014}
+.abtn.purple{border-color:var(--purple);color:var(--purple)}
+.abtn.purple:hover:not(:disabled){background:#1a0a2a}
+.abtn span.icon{font-size:14px;flex-shrink:0}
+.dice-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.die{width:38px;height:38px;border-radius:7px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--gold)}
+@keyframes droll{0%{transform:rotate(0) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
+.die.spin{animation:droll .35s ease-out}
+.dtotal{font-size:11px;color:var(--muted)}
+.dtotal b{color:var(--gold);font-size:13px}
+.turn-bar{font-size:11px;color:var(--muted);margin-bottom:6px;background:var(--bg3);border-radius:6px;padding:6px 8px;border:1px solid var(--border)}
+.turn-bar b{color:var(--text)}
+
+/* Tile info */
+.tinfo{background:var(--bg3);border-radius:10px;padding:10px;flex-shrink:0}
+.tinfo h3{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:800}
+.tinfo-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)}
+.tinfo-row:last-child{border:none}
+.tinfo-row span:first-child{color:var(--muted)}
+.tinfo-row span:last-child{font-weight:700}
+
+/* Log */
+.log-item{font-size:11px;padding:5px 8px;border-radius:5px;background:var(--bg3);line-height:1.4;flex-shrink:0}
+.log-item.g{border-left:3px solid var(--green)}.log-item.r{border-left:3px solid var(--red)}
+.log-item.n{border-left:3px solid var(--muted)}.log-item.e{border-left:3px solid var(--gold)}
+.log-item.p{border-left:3px solid var(--purple)}.log-item.t{border-left:3px solid var(--teal)}
+
+/* Zone legend */
+.zleg{display:grid;grid-template-columns:1fr 1fr;gap:4px;flex-shrink:0}
+.zli{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.zlid{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ══════════════ MODAL ══════════════ */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px;max-width:400px;width:100%;max-height:90vh;overflow-y:auto;animation:mPop .25s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-family:'Cinzel',serif;font-size:18px;color:var(--gold);margin-bottom:8px}
+.modal-body{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.mbtns{display:flex;gap:8px;flex-wrap:wrap}
+.mbtns .btn{flex:1;min-width:100px}
+
+/* Event card */
+.ecard{border-radius:10px;padding:14px;margin-bottom:12px;text-align:center}
+.ecard.growth{background:#07200f;border:1px solid #1a5030}
+.ecard.crisis{background:#200707;border:1px solid #501a1a}
+.ecard.fun{background:#1a1600;border:1px solid #504010}
+.ecard-type{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.growth .ecard-type{color:var(--green)}.crisis .ecard-type{color:var(--red)}.fun .ecard-type{color:var(--gold)}
+.ecard-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;margin-bottom:6px}
+.ecard-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.ecard-effect{font-size:12px;font-weight:700;background:rgba(255,255,255,.05);border-radius:6px;padding:8px}
+.growth .ecard-effect{color:var(--green)}.crisis .ecard-effect{color:var(--red)}.fun .ecard-effect{color:var(--gold)}
+
+/* Trade modal */
+.trade-section{background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:10px}
+.trade-section h3{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:800}
+.trade-prop{display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--bg2);border-radius:7px;margin-bottom:5px;cursor:pointer;border:1px solid transparent;transition:all .12s;font-size:12px}
+.trade-prop:hover{border-color:var(--blue)}
+.trade-prop.sel{border-color:var(--gold);background:#1a1400}
+.trade-prop .tp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cash-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:'Mulish',sans-serif;font-size:14px;font-weight:700;outline:none}
+.cash-input:focus{border-color:var(--gold)}
+.trade-summary{background:var(--bg);border-radius:8px;padding:10px;font-size:12px;line-height:1.8}
+
+/* Invest modal */
+.inv-slider-wrap{margin:10px 0}
+.inv-slider-wrap label{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:6px}
+.inv-slider-wrap label b{color:var(--gold)}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer}
+
+/* Role ability */
+.ability-card{background:var(--bg3);border:1px solid var(--purple);border-radius:10px;padding:12px;margin-bottom:10px}
+.ability-card .aname{font-size:14px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.ability-card .adesc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.ability-card .acooldown{font-size:11px;color:var(--purple);margin-top:6px}
+
+/* Toast */
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gold);color:#1a0a00;padding:9px 18px;border-radius:10px;font-weight:800;font-size:13px;transition:transform .25s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* Win screen overlay */
+.win-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:400;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
+.win-overlay.open{display:flex}
+.win-icon{font-size:80px;margin-bottom:16px;animation:bounce 1s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(-10px)}to{transform:translateY(10px)}}
+.win-title{font-family:'Cinzel',serif;font-size:clamp(24px,5vw,48px);color:var(--gold);margin-bottom:8px}
+.win-sub{font-size:16px;color:var(--muted);margin-bottom:32px}
+.win-board{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:32px;max-width:600px}
+.win-card{background:var(--bg2);border-radius:12px;padding:14px 20px;border:1px solid var(--border);min-width:140px}
+.win-card.winner{border-color:var(--gold);box-shadow:0 0 20px rgba(242,201,76,.2)}
+.wc-pos{font-size:11px;color:var(--muted);margin-bottom:4px}
+.wc-name{font-size:15px;font-weight:800;margin-bottom:2px}
+.wc-role{font-size:11px;color:var(--muted);margin-bottom:6px}
+.wc-nw{font-size:18px;font-weight:800;color:var(--gold)}
+
+@media(max-width:600px){
+  .side{width:220px}
+  .board{min-width:480px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOBBY ══ -->
+<div id="s-lobby" class="screen active">
+  <div class="logo-wrap">
+    <div class="logo-tamil">Tamil Nadu<br>Monopoly</div>
+    <div class="logo-tamilscript">தமிழ்நாடு முதலாளித்துவம்</div>
+    <div class="logo-sub">The Economic Strategy Board Game</div>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab on" onclick="ltab('host',this)">Host Game</button>
+      <button class="tab" onclick="ltab('join',this)">Join Game</button>
+    </div>
+    <div class="tc on" id="tc-host">
+      <div id="host-form">
+        <div class="field"><label>Your Name</label><input id="h-name" placeholder="Enter your name" maxlength="16"/></div>
+        <div class="note">Roles are assigned randomly at game start — every game is different!</div>
+        <button class="btn btn-gold btn-full" onclick="createRoom()">Create Room</button>
+      </div>
+      <div id="host-room" style="display:none">
+        <div class="code-box"><div class="code-big" id="rc-display">—</div><div class="code-hint">Share this code with friends</div></div>
+        <ul class="plist" id="h-plist"></ul>
+        <div class="note">Minimum 2 players. Bots available for solo/testing.</div>
+        <button class="btn btn-gold btn-full" id="start-btn" onclick="startGame()" disabled>Waiting for players…</button>
+        <button class="btn btn-ghost btn-full" onclick="addBot()">+ Add Bot Player</button>
+      </div>
+    </div>
+    <div class="tc" id="tc-join">
+      <div id="join-form">
+        <div class="field"><label>Your Name</label><input id="j-name" placeholder="Enter your name" maxlength="16"/></div>
+        <div class="field"><label>Room Code</label><input id="j-code" placeholder="e.g. TNX839" maxlength="8" style="text-transform:uppercase;letter-spacing:4px;font-weight:800"/></div>
+        <div class="note">Your role will be assigned randomly when the host starts.</div>
+        <button class="btn btn-gold btn-full" onclick="joinRoom()">Join Room</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROLE REVEAL ══ -->
+<div id="s-rolereveal" class="screen">
+  <div class="rr-wrap">
+    <div class="rr-badge">Your Role Has Been Assigned</div>
+    <div class="rr-icon" id="rr-icon">★</div>
+    <div class="rr-name" id="rr-name">—</div>
+    <div class="rr-desc" id="rr-desc">—</div>
+    <div class="rr-power">
+      <div class="rr-power-label">Special Ability</div>
+      <div class="rr-power-text" id="rr-power">—</div>
+      <div class="rr-bonus" id="rr-bonus">—</div>
+    </div>
+    <div class="rr-players" id="rr-players"></div>
+    <button class="btn btn-gold" onclick="enterGame()" style="width:220px">Let's Play! →</button>
+  </div>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="s-game" class="screen">
+  <div class="ghead">
+    <div class="ghead-logo">TN Monopoly</div>
+    <div class="ghead-center">
+      <div class="chip gold" id="g-myrole">—</div>
+      <div class="chip" id="g-room">—</div>
+      <div class="chip" id="g-turn-chip">—</div>
+    </div>
+    <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px" onclick="quitGame()">Quit</button>
+  </div>
+  <div class="gbody">
+    <div class="bwrap"><div class="board" id="board"></div></div>
+    <div class="side">
+      <div class="stabs">
+        <div class="stab on" onclick="stab('players',this)">Players</div>
+        <div class="stab" onclick="stab('actions',this)">Actions</div>
+        <div class="stab" onclick="stab('log',this)">Log</div>
+      </div>
+      <div class="spanel on" id="sp-players"></div>
+      <div class="spanel" id="sp-actions">
+        <div class="turn-bar">Turn: <b id="act-turn">—</b></div>
+        <div class="dice-row">
+          <div class="die" id="d1">?</div>
+          <div class="die" id="d2">?</div>
+          <div class="dtotal">Total: <b id="dtot">—</b></div>
+        </div>
+        <div class="apanel">
+          <h3>Actions</h3>
+          <button class="abtn primary" id="b-roll" onclick="doRoll()"><span class="icon">🎲</span>Roll Dice</button>
+          <button class="abtn green" id="b-buy" onclick="doBuy()" disabled><span class="icon">🏙</span><span id="b-buy-txt">Buy Property</span></button>
+          <button class="abtn" id="b-upg" onclick="doUpgrade()" disabled><span class="icon">⬆</span><span id="b-upg-txt">Upgrade</span></button>
+          <button class="abtn purple" id="b-ability" onclick="doAbility()" disabled><span class="icon">⚡</span><span id="b-ability-txt">Use Ability</span></button>
+          <button class="abtn red" id="b-loan" onclick="doLoan()" disabled><span class="icon">🏦</span>Take Loan ₹5L</button>
+          <button class="abtn" id="b-trade" onclick="openTrade()" disabled><span class="icon">🤝</span>Trade</button>
+          <button class="abtn" id="b-invest" onclick="openInvest()" disabled><span class="icon">📈</span>Invest in Property</button>
+          <button class="abtn" id="b-endturn" onclick="doEndTurn()" disabled><span class="icon">➡</span>End Turn</button>
+        </div>
+        <div class="tinfo" id="tinfo" style="display:none">
+          <h3>Selected Tile</h3>
+          <div id="tinfo-rows"></div>
+        </div>
+      </div>
+      <div class="spanel" id="sp-log"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EVENT MODAL ══ -->
+<div class="overlay" id="ov-event">
+  <div class="modal">
+    <h2>Event Card</h2>
+    <div class="modal-body" id="ev-body"></div>
+    <div class="mbtns"><button class="btn btn-gold" onclick="closeOv('ov-event')">Got it</button></div>
+  </div>
+</div>
+
+<!-- ══ TRADE MODAL ══ -->
+<div class="overlay" id="ov-trade">
+  <div class="modal" style="max-width:480px">
+    <h2>Trade</h2>
+    <div class="modal-body" id="trade-body" style="margin-bottom:0"></div>
+    <div class="mbtns" id="trade-btns" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- ══ INVEST MODAL ══ -->
+<div class="overlay" id="ov-invest">
+  <div class="modal">
+    <h2>Invest in Property</h2>
+    <div class="modal-body" id="inv-body" style="margin-bottom:0"></div>
+    <div class="mbtns" id="inv-btns" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- ══ ABILITY MODAL ══ -->
+<div class="overlay" id="ov-ability">
+  <div class="modal">
+    <h2>Role Ability</h2>
+    <div class="modal-body" id="ab-body"></div>
+    <div class="mbtns" id="ab-btns"></div>
+  </div>
+</div>
+
+<!-- ══ GENERIC MODAL ══ -->
+<div class="overlay" id="ov-gen">
+  <div class="modal">
+    <h2 id="gen-title">—</h2>
+    <div class="modal-body" id="gen-body"></div>
+    <div class="mbtns" id="gen-btns"></div>
+  </div>
+</div>
+
+<!-- ══ WIN ══ -->
+<div class="win-overlay" id="win-screen">
+  <div class="win-icon">🏆</div>
+  <div class="win-title" id="win-title">—</div>
+  <div class="win-sub" id="win-sub">—</div>
+  <div class="win-board" id="win-board"></div>
+  <button class="btn btn-gold" onclick="resetGame()" style="padding:14px 40px;font-size:16px">Play Again</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+const ROLES=[
+  {name:'Politician',icon:'🏛',color:'#e08040',
+   desc:'A veteran of Tamil politics with deep roots in every district.',
+   power:'Crisis events cost you 20% less. Once per game: cancel any rent payment.',
+   bonus:'Income bonus in Chennai and admin districts.',
+   passive:(p,ev)=>{if(ev&&ev.type==='crisis'){p.cash=Math.max(0,p.cash+Math.floor((p._crisisHit||0)*0.2));}},
+   special:(G,pi)=>{G._abilityData={type:'cancel_rent',pi};showGen('Block Rent','Block the next rent payment anyone pays you — they owe nothing this turn.',
+     [{label:'Activate',cls:'btn-gold',fn:()=>{G.players[pi].abilityUsed=true;G.players[pi]._blockRent=true;log('Politician activated rent block!','p');closeOv('ov-ability');closeOv('ov-gen');renderAll();}}]);},
+   used:false},
+  {name:'Industrialist',icon:'⚙',color:'#4080e0',
+   desc:'The factory king of Coimbatore, building empires from steel and ambition.',
+   power:'Factories (districts zones 1,2,10) cost 15% less. Once per game: instant free upgrade on any property you own.',
+   bonus:'Double income from Coimbatore, Tiruppur, Hosur.',
+   special:(G,pi)=>{const p=G.players[pi];const upgradeable=p.properties.filter(i=>G.tiles[i]&&G.tiles[i].level<3);
+     if(!upgradeable.length){showGen('No Properties','You have no properties to upgrade.',[]); return;}
+     const opts=upgradeable.map(i=>({label:`${G.tiles[i].name} (Lv${G.tiles[i].level}→${G.tiles[i].level+1})`,cls:'btn-gold',fn:()=>{G.tiles[i].level++;p.abilityUsed=true;log('Industrialist free upgrade: '+G.tiles[i].name,'p');closeOv('ov-gen');closeOv('ov-ability');renderAll();}}));
+     showGen('Free Upgrade','Choose a property to instantly upgrade for free:',opts);},
+   used:false},
+  {name:'Transport Tycoon',icon:'✈',color:'#40c080',
+   desc:'Owns the skies, tracks and ports connecting Tamil Nadu.',
+   power:'Earn +₹2L bonus whenever any player lands on your airport or port. Once per game: teleport to any tile.',
+   bonus:'All airport and port tiles give doubled income.',
+   special:(G,pi)=>{showGen('Teleport','Choose a tile type to move to:',
+     [{label:'Nearest Airport',cls:'btn-gold',fn:()=>{const airports=G.tiles.reduce((a,t,i)=>t.type==='airport'?[...a,i]:a,[]);const p=G.players[pi];p.pos=airports[0]||0;p.abilityUsed=true;processTile(p,G.tiles[p.pos]);log('Transport Tycoon teleported to '+G.tiles[p.pos].name,'p');closeOv('ov-gen');closeOv('ov-ability');refreshBoard();renderAll();}},
+      {label:'Nearest Port',cls:'btn-gold',fn:()=>{const ports=G.tiles.reduce((a,t,i)=>t.type==='port'?[...a,i]:a,[]);const p=G.players[pi];p.pos=ports[0]||0;p.abilityUsed=true;processTile(p,G.tiles[p.pos]);log('Transport Tycoon teleported to '+G.tiles[p.pos].name,'p');closeOv('ov-gen');closeOv('ov-ability');refreshBoard();renderAll();}}]);},
+   used:false},
+  {name:'Tourism King',icon:'🏝',color:'#d060a0',
+   desc:'Master of temples, hills and beaches that draw the world to Tamil Nadu.',
+   power:'Tourism income doubled. Once per game: Festival Boost — all your properties earn double for 2 rounds.',
+   bonus:'Ooty, Kodaikanal, Rameswaram, Kanyakumari give +50% rent.',
+   special:(G,pi)=>{G.players[pi].festivalTurns=2;G.players[pi].abilityUsed=true;log('Tourism King activated Festival Boost! Double income for 2 turns.','p');closeOv('ov-ability');renderAll();},
+   used:false},
+  {name:'Business Magnate',icon:'💰',color:'#f2c94c',
+   desc:'The deal-maker of Chennai\'s IT corridors and trading floors.',
+   power:'Buy all properties at 10% discount. Once per game: Force Trade — pick any property and offer a deal.',
+   bonus:'Extra ₹2L per turn for owning 5+ properties.',
+   special:(G,pi)=>{openForceTrade(pi);G.players[pi].abilityUsed=true;},
+   used:false},
+  {name:'Local Landlord',icon:'🌾',color:'#9060d0',
+   desc:'The quiet ruler of rural Tamil Nadu, with land in every corner.',
+   power:'Rural districts cost 15% less. Once per game: Land Grab — claim any unowned tile at 50% cost.',
+   bonus:'Interior and South zones give +₹1L passive income per turn.',
+   special:(G,pi)=>{const unowned=G.tiles.reduce((a,t,i)=>t.type==='district'&&t.owner===undefined?[...a,i]:a,[]);
+     if(!unowned.length){showGen('No tiles','All districts are owned!',[]); return;}
+     const opts=unowned.slice(0,6).map(i=>({label:`${G.tiles[i].name} (₹${Math.floor(G.tiles[i].price*0.5)}L)`,cls:'btn-gold',fn:()=>{
+       const p=G.players[pi];const cost=Math.floor(G.tiles[i].price*0.5);
+       if(p.cash<cost){toast('Not enough cash!');return;}
+       p.cash-=cost;G.tiles[i].owner=pi;p.properties.push(i);p.abilityUsed=true;
+       log('Local Landlord claimed '+G.tiles[i].name+' at ₹'+cost+'L','p');
+       closeOv('ov-gen');closeOv('ov-ability');checkZoneBonus(pi,G.tiles[i].zone);updateNW();refreshBoard();renderAll();}}));
+     showGen('Land Grab','Choose an unowned district to claim at 50% cost:',opts);},
+   used:false},
+];
+
+const ZONES=[
+  {id:0,name:'Chennai Metro',color:'#4080e0',bg:'z0'},
+  {id:1,name:'North Industrial',color:'#40c080',bg:'z1'},
+  {id:2,name:'Textile & Trade',color:'#e08040',bg:'z2'},
+  {id:3,name:'Western Ghats',color:'#9060d0',bg:'z3'},
+  {id:4,name:'Temple Core',color:'#e05050',bg:'z4'},
+  {id:5,name:'Southern Tip',color:'#40c0c0',bg:'z5'},
+  {id:6,name:'East Coast',color:'#d060a0',bg:'z6'},
+  {id:7,name:'Cauvery Delta',color:'#6060d0',bg:'z7'},
+  {id:8,name:'Central Agri',color:'#a0c040',bg:'z8'},
+  {id:9,name:'NE Growth',color:'#40a0a0',bg:'z9'},
+  {id:10,name:'Interior Dev',color:'#6090c0',bg:'z10'},
+  {id:11,name:'South Interior',color:'#c06060',bg:'z11'},
+];
+
+const RAW_TILES=[
+  {id:0,name:'START',type:'corner'},
+  {id:1,name:'Chennai',type:'district',zone:0,price:40,rent:[2,5,12,30]},
+  {id:2,name:'Tiruvallur',type:'district',zone:0,price:22,rent:[2,4,10,18]},
+  {id:3,name:'Chengalpattu',type:'district',zone:0,price:24,rent:[2,4,12,20]},
+  {id:4,name:'Chennai Airport',type:'airport',price:50,rent:[4,8,16,40]},
+  {id:5,name:'Vellore',type:'district',zone:1,price:18,rent:[2,3,8,14]},
+  {id:6,name:'Ranipet',type:'district',zone:1,price:16,rent:[1,3,7,12]},
+  {id:7,name:'Tirupattur',type:'district',zone:1,price:14,rent:[1,2,6,10]},
+  {id:8,name:'EVENT',type:'event'},
+  {id:9,name:'Coimbatore',type:'district',zone:2,price:32,rent:[3,6,14,26]},
+  {id:10,name:'Tiruppur',type:'district',zone:2,price:28,rent:[2,5,12,22]},
+  {id:11,name:'Erode',type:'district',zone:2,price:26,rent:[2,5,11,20]},
+  {id:12,name:'ZONE BONUS CHECK',type:'corner'},
+  {id:13,name:'Nilgiris',type:'district',zone:3,price:30,rent:[3,5,12,24]},
+  {id:14,name:'Dindigul',type:'district',zone:3,price:22,rent:[2,4,9,18]},
+  {id:15,name:'Coimbatore Airport',type:'airport',price:40,rent:[3,6,12,30]},
+  {id:16,name:'Madurai',type:'district',zone:4,price:34,rent:[3,6,15,28]},
+  {id:17,name:'Sivaganga',type:'district',zone:4,price:20,rent:[2,4,9,16]},
+  {id:18,name:'Virudhunagar',type:'district',zone:4,price:20,rent:[2,4,9,16]},
+  {id:19,name:'Theni',type:'district',zone:4,price:18,rent:[2,3,8,14]},
+  {id:20,name:'LOAN OFFICE',type:'corner'},
+  {id:21,name:'Tirunelveli',type:'district',zone:5,price:28,rent:[2,5,12,22]},
+  {id:22,name:'Tenkasi',type:'district',zone:5,price:16,rent:[1,3,7,12]},
+  {id:23,name:'Kanyakumari',type:'district',zone:5,price:26,rent:[3,5,12,22]},
+  {id:24,name:'Thoothukudi',type:'district',zone:5,price:24,rent:[2,4,10,20]},
+  {id:25,name:'Thoothukudi Port',type:'port',price:45,rent:[4,8,15,35]},
+  {id:26,name:'Cuddalore',type:'district',zone:6,price:18,rent:[2,3,8,14]},
+  {id:27,name:'Nagapattinam',type:'district',zone:6,price:20,rent:[2,4,9,16]},
+  {id:28,name:'Mayiladuthurai',type:'district',zone:6,price:18,rent:[2,3,8,14]},
+  {id:29,name:'EVENT',type:'event'},
+  {id:30,name:'Thanjavur',type:'district',zone:7,price:26,rent:[2,5,11,20]},
+  {id:31,name:'Tiruvarur',type:'district',zone:7,price:18,rent:[2,3,8,14]},
+  {id:32,name:'Ariyalur',type:'district',zone:7,price:16,rent:[1,3,7,12]},
+  {id:33,name:'FREE REST',type:'corner'},
+  {id:34,name:'Tiruchirappalli',type:'district',zone:8,price:30,rent:[3,5,12,24]},
+  {id:35,name:'Perambalur',type:'district',zone:8,price:14,rent:[1,2,6,10]},
+  {id:36,name:'Karur',type:'district',zone:8,price:18,rent:[2,3,8,14]},
+  {id:37,name:'Trichy Airport',type:'airport',price:38,rent:[3,6,12,28]},
+  {id:38,name:'Kancheepuram',type:'district',zone:9,price:28,rent:[2,5,12,22]},
+  {id:39,name:'Villupuram',type:'district',zone:9,price:20,rent:[2,4,9,16]},
+  {id:40,name:'Tiruvannamalai',type:'district',zone:9,price:22,rent:[2,4,10,18]},
+  {id:41,name:'Kallakurichi',type:'district',zone:9,price:16,rent:[1,3,7,12]},
+  {id:42,name:'EVENT',type:'event'},
+  {id:43,name:'Salem',type:'district',zone:10,price:28,rent:[2,5,12,22]},
+  {id:44,name:'Namakkal',type:'district',zone:10,price:18,rent:[2,3,8,14]},
+  {id:45,name:'Dharmapuri',type:'district',zone:10,price:16,rent:[1,3,7,12]},
+  {id:46,name:'Krishnagiri',type:'district',zone:10,price:18,rent:[2,3,8,14]},
+  {id:47,name:'Chennai Port',type:'port',price:55,rent:[5,10,20,45]},
+  {id:48,name:'Ramanathapuram',type:'district',zone:11,price:20,rent:[2,4,9,16]},
+  {id:49,name:'Pudukkottai',type:'district',zone:11,price:18,rent:[2,3,8,14]},
+  {id:50,name:'Tenkasi',type:'district',zone:11,price:16,rent:[1,3,7,12]},
+  {id:51,name:'Puducherry UT',type:'special',price:35,rent:[4,8,16,32]},
+  {id:52,name:'Karaikal UT',type:'special',price:30,rent:[3,6,12,26]},
+  {id:53,name:'Madurai Airport',type:'airport',price:42,rent:[4,8,14,32]},
+  {id:54,name:'Salem Airport',type:'airport',price:30,rent:[2,5,10,22]},
+  {id:55,name:'EVENT',type:'event'},
+  {id:56,name:'Karaikal Port',type:'port',price:32,rent:[3,6,11,26]},
+  {id:57,name:'Kamarajar Port',type:'port',price:48,rent:[4,9,18,38]},
+  {id:58,name:'Thoothukudi Airport',type:'airport',price:28,rent:[2,5,10,20]},
+  {id:59,name:'GO TO LOAN',type:'corner'},
+];
+
+const EVENTS=[
+  {type:'growth',title:'IPL Season!',desc:'CSK fever grips Tamil Nadu — stadiums packed!',effect:'All players +₹2L',
+   fn:(G)=>G.players.forEach(p=>p.cash+=2)},
+  {type:'growth',title:'Pongal Festival',desc:'State-wide celebration — businesses boom everywhere.',effect:'All players +₹3L',
+   fn:(G)=>G.players.forEach(p=>p.cash+=3)},
+  {type:'growth',title:'IT Boom',desc:'Chennai tech corridor attracts massive investment.',effect:'Chennai zone owners +₹5L',
+   fn:(G)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===0))p.cash+=5;})},
+  {type:'growth',title:'Textile Export Deal',desc:'New international contracts flood Coimbatore.',effect:'Textile zone owners +₹4L',
+   fn:(G)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===2))p.cash+=4;})},
+  {type:'growth',title:'Tourism Award',desc:'TN wins Best Tourism State — visitors flood in.',effect:'+₹1L per property owned',
+   fn:(G)=>G.players.forEach(p=>p.cash+=p.properties.length)},
+  {type:'growth',title:'Infrastructure Grant',desc:'Central govt releases major development funds.',effect:'All players +₹4L',
+   fn:(G)=>G.players.forEach(p=>p.cash+=4)},
+  {type:'growth',title:'Jallikattu Season',desc:'Madurai erupts with celebration and commerce.',effect:'Temple Core owners +₹3L',
+   fn:(G)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===4))p.cash+=3;})},
+  {type:'growth',title:'SIPCOT Expansion',desc:'New industrial parks announced across TN.',effect:'Interior Dev owners +₹4L',
+   fn:(G)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===10))p.cash+=4;})},
+  {type:'crisis',title:'Northeast Monsoon',desc:'Heavy rains flood coastal districts.',effect:'East Coast owners -₹3L',
+   fn:(G,cur)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===6))p.cash=Math.max(0,p.cash-(cur?.role?.name==='Politician'?2:3));})},
+  {type:'crisis',title:'Power Outage',desc:'Severe electricity shortage hits all sectors.',effect:'All players -₹2L',
+   fn:(G,cur)=>G.players.forEach(p=>p.cash=Math.max(0,p.cash-(cur?.role?.name==='Politician'?1:2)))},
+  {type:'crisis',title:'Drought Season',desc:'Water shortage devastates agriculture.',effect:'Central Agri owners -₹4L',
+   fn:(G,cur)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===8))p.cash=Math.max(0,p.cash-(cur?.role?.name==='Politician'?3:4));})},
+  {type:'crisis',title:'Highway Blocked',desc:'Protests shut major arterial roads.',effect:'Current player skips next turn',
+   fn:(G,cur)=>{if(cur)cur.skipTurn=true;}},
+  {type:'crisis',title:'Cyclone Warning',desc:'Southern coast put on high alert.',effect:'Southern Tip owners -₹3L',
+   fn:(G,cur)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===5))p.cash=Math.max(0,p.cash-3);})},
+  {type:'crisis',title:'Land Dispute',desc:'Courts freeze property transactions.',effect:'No one can buy properties this round',
+   fn:(G)=>{G.landFreeze=true;}},
+  {type:'fun',title:'Rajini Blockbuster',desc:'Thalaiva\'s new film breaks all records!',effect:'All players +₹1L',
+   fn:(G)=>G.players.forEach(p=>p.cash+=1)},
+  {type:'fun',title:'Auto Driver Strike',desc:'Chennai autos refuse to run — chaos ensues!',effect:'Current player -₹1L',
+   fn:(G,cur)=>{if(cur)cur.cash=Math.max(0,cur.cash-1);}},
+  {type:'fun',title:'Karuvaadu Festival',desc:'Dried fish festival in Nagapattinam — tourists everywhere.',effect:'East Coast owners +₹2L',
+   fn:(G)=>G.players.forEach(p=>{if(p.properties.some(i=>G.tiles[i]?.zone===6))p.cash+=2;})},
+  {type:'fun',title:'Filter Coffee Shortage',desc:'Kumbakonam degree coffee supply collapses!',effect:'All distracted — free action skipped',
+   fn:()=>{}},
+  {type:'fun',title:'Kollywood Shooting',desc:'Film crew arrives at your district!',effect:'Random district owner +₹3L',
+   fn:(G)=>{const owners=G.players.filter(p=>p.properties.length>0);if(owners.length){const lucky=owners[Math.floor(Math.random()*owners.length)];lucky.cash+=3;}}},
+];
+
+const P_COLORS=['#f2c94c','#3ecf8e','#5b9cf6','#e879b8','#f59e0b','#a78bfa'];
+const P_EMOJIS=['★','◆','▲','●','■','♦'];
+const BOT_NAMES=['Murugan','Kavitha','Selvam','Priya','Rajan','Lalitha'];
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let G={
+  roomCode:'',players:[],tiles:[],
+  currentPlayer:0,rolled:false,
+  turnCount:0,landFreeze:false,
+  investments:{}, // tileId -> [{pi,pct}]
+  tradeOffer:null,
+};
+let myIdx=0;
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function $(id){return document.getElementById(id);}
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600);}
+function log(msg,type='n'){
+  const p=$('sp-log');
+  const d=document.createElement('div');
+  d.className='log-item '+type;
+  d.textContent=msg;
+  p.insertBefore(d,p.firstChild);
+  if(p.children.length>60)p.removeChild(p.lastChild);
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function openOv(id){$(id).classList.add('open');}
+function closeOv(id){$(id).classList.remove('open');}
+function showGen(title,body,btns){
+  $('gen-title').textContent=title;
+  $('gen-body').innerHTML=typeof body==='string'?`<p>${body}</p>`:body;
+  const wrap=$('gen-btns');wrap.innerHTML='';
+  if(!btns||btns.length===0){const b=document.createElement('button');b.className='btn btn-ghost';b.textContent='Close';b.onclick=()=>closeOv('ov-gen');wrap.appendChild(b);}
+  else btns.forEach(bd=>{const b=document.createElement('button');b.className='btn '+(bd.cls||'btn-ghost');b.textContent=bd.label;b.onclick=bd.fn;wrap.appendChild(b);});
+  openOv('ov-gen');
+}
+
+// ═══════════════════════════════════════════
+// LOBBY
+// ═══════════════════════════════════════════
+function ltab(t,el){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.tc').forEach(x=>x.classList.remove('on'));
+  $('tc-'+t).classList.add('on');
+}
+function genCode(){return 'TN'+Math.random().toString(36).slice(2,5).toUpperCase();}
+function mkPlayer(name,idx,isBot=false){
+  return {name,role:null,cash:20,netWorth:20,loan:0,loanTurns:0,loanCount:0,
+    properties:[],pos:0,color:P_COLORS[idx%6],emoji:P_EMOJIS[idx%6],
+    skipTurn:false,isBot,abilityUsed:false,festivalTurns:0,_blockRent:false,
+    investmentsIn:[]};
+}
+function createRoom(){
+  const name=$('h-name').value.trim()||'Player 1';
+  G.roomCode=genCode();myIdx=0;
+  G.players=[mkPlayer(name,0)];
+  $('rc-display').textContent=G.roomCode;
+  $('host-form').style.display='none';
+  $('host-room').style.display='block';
+  renderLobby();toast('Room '+G.roomCode+' created!');
+}
+function addBot(){
+  if(G.players.length>=6){toast('Max 6 players');return;}
+  const n=G.players.length;
+  G.players.push(mkPlayer(BOT_NAMES[n-1]||'Bot '+n,n,true));
+  renderLobby();toast('Bot added');
+}
+function joinRoom(){
+  const name=$('j-name').value.trim()||'Player '+(G.players.length+1);
+  const code=$('j-code').value.trim().toUpperCase();
+  if(!code){toast('Enter a room code');return;}
+  const n=G.players.length;
+  G.players.push(mkPlayer(name,n));
+  myIdx=n;G.roomCode=code;
+  $('join-form').innerHTML=`<div style="text-align:center;padding:12px">
+    <div style="font-family:'Cinzel',serif;font-size:26px;color:var(--gold);letter-spacing:5px;margin-bottom:8px">${code}</div>
+    <div style="color:var(--green);font-weight:700;margin-bottom:8px">Joined as ${name}</div>
+    <div class="note">Role assigned randomly at game start.</div>
+    <button class="btn btn-gold btn-full" style="margin-top:10px" onclick="startGame()">Start Game</button>
+  </div>`;
+  toast('Joined '+code);
+}
+function renderLobby(){
+  const ul=$('h-plist');ul.innerHTML='';
+  for(let i=0;i<6;i++){
+    const li=document.createElement('li');
+    if(i<G.players.length){
+      const p=G.players[i];
+      li.innerHTML=`<div class="pdot" style="background:${p.color}"></div>
+        <span>${p.name}</span>${p.isBot?'<span class="rtag">🤖 Bot</span>':''}
+        <span style="margin-left:auto;font-size:9px;color:var(--muted);background:var(--bg);padding:2px 7px;border-radius:4px">Role: Random</span>
+        ${i===0?'<span class="htag">HOST</span>':''}`;
+    }else{li.classList.add('waiting');li.innerHTML=`<div class="pdot" style="background:#222"></div><span>Waiting...</span>`;}
+    ul.appendChild(li);
+  }
+  const sb=$('start-btn');
+  if(G.players.length>=2){sb.disabled=false;sb.textContent='Start Game ('+G.players.length+' players)';}
+  else{sb.disabled=true;sb.textContent='Need at least 2 players…';}
+}
+
+// ═══════════════════════════════════════════
+// ROLE ASSIGNMENT
+// ═══════════════════════════════════════════
+function assignRoles(){
+  const pool=shuffle([...ROLES.map(r=>({...r,used:false}))]);
+  G.players.forEach((p,i)=>p.role={...pool[i%pool.length]});
+}
+function startGame(){
+  if(!G.players.length)return;
+  G.tiles=RAW_TILES.map(t=>({...t,level:0,owner:undefined,investors:[]}));
+  G.investments={};
+  G.landFreeze=false;
+  G.turnCount=0;
+  assignRoles();
+  showScreen('s-rolereveal');
+  renderRoleReveal();
+}
+function renderRoleReveal(){
+  const p=G.players[myIdx];
+  const r=p.role;
+  $('rr-icon').textContent=r.icon;
+  $('rr-name').textContent=r.name;
+  $('rr-desc').textContent=r.desc;
+  $('rr-power').textContent=r.power;
+  $('rr-bonus').textContent='Regional bonus: '+r.bonus;
+  const wrap=$('rr-players');wrap.innerHTML='';
+  G.players.forEach(pl=>{
+    const chip=document.createElement('div');
+    chip.className='rr-player-chip';
+    chip.innerHTML=`<div class="rr-dot" style="background:${pl.color}"></div>
+      <span>${pl.name} — </span><span style="color:${pl.role.color}">${pl.role.icon} ${pl.role.name}</span>`;
+    wrap.appendChild(chip);
+  });
+}
+function enterGame(){
+  showScreen('s-game');
+  $('g-myrole').textContent=G.players[myIdx].role.icon+' '+G.players[myIdx].role.name;
+  $('g-room').textContent='Room: '+G.roomCode;
+  buildBoard();
+  renderAll();
+  log('Game started! Roles assigned.',  'e');
+  G.players.forEach(p=>log(p.name+' → '+p.role.icon+' '+p.role.name,'n'));
+  log('Turn 1: '+G.players[0].name,'n');
+}
+
+// ═══════════════════════════════════════════
+// BOARD BUILD
+// ═══════════════════════════════════════════
+function buildBoard(){
+  const b=$('board');b.innerHTML='';
+  G.tiles.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.id='tile-'+i;d.className='tile';
+    if(t.type==='corner')d.classList.add('corner-t');
+    else if(t.zone!=null&&t.zone>=0)d.classList.add('z'+t.zone);
+    else d.classList.add('sp');
+    d.onclick=()=>selectTile(i);
+    d.innerHTML=`<div class="tname">${t.name}</div>
+      ${t.price?`<div class="tprice">₹${t.price}L</div>`:''}
+      <div class="tlvl" id="tlvl-${i}"></div>
+      <div class="tfoot"><div class="townerdot" id="towd-${i}" style="display:none"></div><div class="tplayers" id="tpl-${i}"></div></div>`;
+    b.appendChild(d);
+  });
+  refreshBoard();
+}
+function refreshBoard(){
+  // clear tokens
+  document.querySelectorAll('.tplayers').forEach(e=>e.innerHTML='');
+  // place tokens
+  G.players.forEach((p,pi)=>{
+    const el=$('tpl-'+p.pos);
+    if(!el)return;
+    const tok=document.createElement('div');
+    tok.className='tp';tok.style.background=p.color;tok.textContent=p.emoji;
+    el.appendChild(tok);
+  });
+  // owner dots + level bars + highlights
+  G.tiles.forEach((t,i)=>{
+    const tile=$('tile-'+i);if(!tile)return;
+    tile.classList.remove('hl-me','hl-cur');
+    // owner dot
+    const od=$('towd-'+i);
+    if(od){if(t.owner!=null){od.style.display='block';od.style.background=G.players[t.owner]?.color||'#fff';}else{od.style.display='none';}}
+    // level dots
+    const lw=$('tlvl-'+i);
+    if(lw&&t.level!=null){lw.innerHTML='';for(let l=0;l<3;l++){const dot=document.createElement('div');dot.className='tlvl-dot'+(l<t.level?' on':'');lw.appendChild(dot);}}
+    if(t.owner===myIdx)tile.classList.add('hl-me');
+  });
+  // current player highlight
+  const cur=G.players[G.currentPlayer];
+  const ct=$('tile-'+cur.pos);if(ct)ct.classList.add('hl-cur');
+}
+
+// ═══════════════════════════════════════════
+// GAME LOGIC
+// ═══════════════════════════════════════════
+function doRoll(){
+  if(G.rolled)return;
+  const d1=Math.ceil(Math.random()*6),d2=Math.ceil(Math.random()*6);
+  const F=['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  const e1=$('d1'),e2=$('d2');
+  e1.classList.add('spin');e2.classList.add('spin');
+  setTimeout(()=>{
+    e1.textContent=F[d1];e2.textContent=F[d2];
+    e1.classList.remove('spin');e2.classList.remove('spin');
+    $('dtot').textContent=d1+d2;
+    movePlayer(d1+d2);
+  },380);
+  G.rolled=true;
+  $('b-roll').disabled=true;
+  $('b-endturn').disabled=false;
+}
+
+function movePlayer(steps){
+  const p=G.players[G.currentPlayer];
+  const prev=p.pos;
+  p.pos=(p.pos+steps)%G.tiles.length;
+  if(p.pos<prev&&prev>0){p.cash+=2;log(p.name+' passed Start +₹2L','g');}
+  // Festival turns
+  if(p.festivalTurns>0) p.festivalTurns--;
+  refreshBoard();
+  const tile=G.tiles[p.pos];
+  log(p.name+' → '+tile.name,'n');
+  processTile(p,tile);
+  if(p.isBot&&G.currentPlayer===G.players.indexOf(p)) setTimeout(botPlay,1000);
+}
+
+function processTile(p,tile){
+  resetActionBtns();
+  if(tile.type==='event'){triggerEvent();return;}
+  if(tile.type==='corner'){
+    if(tile.name.includes('LOAN')){$('b-loan').disabled=p.loanCount>=2;}
+    return;
+  }
+  if(tile.owner==null&&tile.price){
+    if(!G.landFreeze){$('b-buy').disabled=false;$('b-buy-txt').textContent='Buy '+tile.name+' ₹'+calcBuyPrice(p,tile)+'L';}
+  } else if(tile.owner!=null&&tile.owner!==G.currentPlayer){
+    payRent(p,tile);
+  } else if(tile.owner===G.currentPlayer){
+    if(tile.level<3){$('b-upg').disabled=false;$('b-upg-txt').textContent='Upgrade Lv'+(tile.level+1)+' ₹'+Math.round(tile.price*0.5)+'L';}
+  }
+  // always allow trade if not your turn... wait, only on your turn
+  $('b-trade').disabled=false;
+  // invest: can invest in others' properties
+  const othersProps=G.players.some((pl,pi)=>pi!==G.currentPlayer&&pl.properties.length>0);
+  $('b-invest').disabled=!othersProps;
+}
+
+function calcBuyPrice(p,tile){
+  let cost=tile.price;
+  const r=p.role?.name;
+  if(r==='Business Magnate')cost=Math.round(cost*0.9);
+  if(r==='Industrialist'&&tile.type==='district')cost=Math.round(cost*0.85);
+  if(r==='Local Landlord'&&(tile.zone===10||tile.zone===11))cost=Math.round(cost*0.85);
+  return cost;
+}
+
+function payRent(p,tile){
+  const owner=G.players[tile.owner];
+  // block rent?
+  if(owner._blockRent){owner._blockRent=false;log(owner.name+' blocked rent collection (Politician)','p');return;}
+  let rent=tile.rent[tile.level||0]||tile.rent[0];
+  // Transport Tycoon bonus
+  if(owner.role?.name==='Transport Tycoon'&&(tile.type==='airport'||tile.type==='port'))rent+=2;
+  // Tourism King festival
+  if(owner.festivalTurns>0)rent=Math.round(rent*2);
+  // Investments: split rent
+  const invs=tile.investors||[];
+  const ownerShare=invs.length?Math.round(rent*(tile.ownerPct||100)/100):rent;
+  p.cash=Math.max(0,p.cash-rent);
+  owner.cash+=ownerShare;
+  log(p.name+' paid ₹'+rent+'L rent to '+owner.name,'r');
+  toast(p.name+' paid ₹'+rent+'L');
+  // pay investors
+  invs.forEach(inv=>{
+    const share=Math.round(rent*inv.pct/100);
+    G.players[inv.pi].cash+=share;
+    log(G.players[inv.pi].name+' earned ₹'+share+'L investment income','g');
+  });
+  updateNW();renderPlayers();
+}
+
+function resetActionBtns(){
+  ['b-buy','b-upg','b-loan','b-trade','b-invest'].forEach(id=>$(id).disabled=true);
+  $('b-buy-txt').textContent='Buy Property';
+  $('b-upg-txt').textContent='Upgrade';
+  // ability
+  const myp=G.players[G.currentPlayer];
+  $('b-ability').disabled=myp?.abilityUsed||G.currentPlayer!==myIdx;
+  if(myp&&!myp.abilityUsed)$('b-ability-txt').textContent=myp.role?.icon+' Use Ability';
+}
+
+function doBuy(){
+  const p=G.players[G.currentPlayer];
+  const tile=G.tiles[p.pos];
+  if(tile.owner!=null||!tile.price)return;
+  if(G.landFreeze){toast('Land freeze in effect!');return;}
+  const cost=calcBuyPrice(p,tile);
+  if(p.cash<cost){toast('Need ₹'+cost+'L');return;}
+  p.cash-=cost;tile.owner=G.currentPlayer;p.properties.push(p.pos);
+  tile.investors=[];tile.ownerPct=100;
+  log(p.name+' bought '+tile.name+' ₹'+cost+'L','g');
+  $('b-buy').disabled=true;
+  checkZoneBonus(G.currentPlayer,tile.zone);
+  updateNW();refreshBoard();renderPlayers();
+}
+
+function doUpgrade(){
+  const p=G.players[G.currentPlayer];
+  const tile=G.tiles[p.pos];
+  if(tile.owner!==G.currentPlayer||tile.level>=3)return;
+  const cost=Math.round(tile.price*0.5);
+  if(p.cash<cost){toast('Need ₹'+cost+'L to upgrade');return;}
+  p.cash-=cost;tile.level++;
+  const lvls=['','Basic','Developed','Mega Project'];
+  log(p.name+' upgraded '+tile.name+' → '+lvls[tile.level],'g');
+  $('b-upg').disabled=tile.level>=3;
+  updateNW();refreshBoard();renderPlayers();
+}
+
+function doLoan(){
+  const p=G.players[G.currentPlayer];
+  if(p.loanCount>=2){toast('Max 2 loans at a time');return;}
+  p.loan=(p.loan||0)+5;p.loanTurns=5;p.loanCount=(p.loanCount||0)+1;p.cash+=5;
+  log(p.name+' took ₹5L loan (due in 5 turns)','n');
+  $('b-loan').disabled=true;
+  renderPlayers();
+}
+
+function doAbility(){
+  const p=G.players[G.currentPlayer];
+  if(!p.role||p.abilityUsed){toast('Ability already used this game');return;}
+  $('ab-body').innerHTML=`<div class="ability-card">
+    <div class="aname">${p.role.icon} ${p.role.name}</div>
+    <div class="adesc">${p.role.power}</div>
+  </div>`;
+  $('ab-btns').innerHTML='';
+  const activateBtn=document.createElement('button');
+  activateBtn.className='btn btn-gold';activateBtn.textContent='Activate Ability';
+  activateBtn.onclick=()=>{closeOv('ov-ability');p.role.special(G,G.currentPlayer);};
+  const cancelBtn=document.createElement('button');
+  cancelBtn.className='btn btn-ghost';cancelBtn.textContent='Cancel';
+  cancelBtn.onclick=()=>closeOv('ov-ability');
+  $('ab-btns').appendChild(activateBtn);
+  $('ab-btns').appendChild(cancelBtn);
+  openOv('ov-ability');
+}
+
+function checkZoneBonus(pi,zone){
+  if(zone==null||zone<0)return;
+  const zt=G.tiles.filter(t=>t.zone===zone);
+  if(!zt.length)return;
+  if(zt.every(t=>t.owner===pi)){
+    const bonus=zt.length*2;
+    G.players[pi].cash+=bonus;
+    log('ZONE BONUS! '+G.players[pi].name+' owns '+ZONES[zone]?.name+' +₹'+bonus+'L','e');
+    toast('Zone Bonus! +₹'+bonus+'L');
+  }
+}
+
+function triggerEvent(){
+  const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  const cur=G.players[G.currentPlayer];
+  ev.fn(G,cur);
+  if(G.landFreeze) setTimeout(()=>{G.landFreeze=false;},1);
+  updateNW();renderPlayers();
+  $('ev-body').innerHTML=`<div class="ecard ${ev.type}">
+    <div class="ecard-type">${ev.type}</div>
+    <div class="ecard-title">${ev.title}</div>
+    <div class="ecard-desc">${ev.desc}</div>
+    <div class="ecard-effect">${ev.effect}</div>
+  </div>`;
+  openOv('ov-event');
+  log('EVENT: '+ev.title+' — '+ev.effect,'e');
+}
+
+// ═══════════════════════════════════════════
+// TRADE SYSTEM
+// ═══════════════════════════════════════════
+let tradeState={offerProps:[],wantProps:[],offerCash:0,wantCash:0,targetPi:-1};
+
+function openTrade(){
+  tradeState={offerProps:[],wantProps:[],offerCash:0,wantCash:0,targetPi:-1};
+  const p=G.players[G.currentPlayer];
+  // Step 1: pick target player
+  const opts=G.players.map((pl,i)=>{
+    if(i===G.currentPlayer)return null;
+    return `<div class="trade-prop" onclick="selectTradeTarget(${i},this)" data-pi="${i}">
+      <div class="tp-dot" style="background:${pl.color}"></div>
+      <span>${pl.name}</span><span style="margin-left:auto;color:var(--muted);font-size:11px">${pl.role?.icon} ${pl.role?.name}</span>
+    </div>`;
+  }).filter(Boolean).join('');
+  $('trade-body').innerHTML=`<div class="trade-section"><h3>Select Player to Trade With</h3>${opts||'<p style="color:var(--muted)">No other players</p>'}</div>`;
+  $('trade-btns').innerHTML=`<button class="btn btn-ghost" onclick="closeOv('ov-trade')">Cancel</button>`;
+  openOv('ov-trade');
+}
+
+function selectTradeTarget(pi,el){
+  tradeState.targetPi=pi;
+  document.querySelectorAll('#trade-body .trade-prop').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  renderTradeForm();
+}
+
+function renderTradeForm(){
+  const myP=G.players[G.currentPlayer];
+  const theirP=G.players[tradeState.targetPi];
+  const myProps=myP.properties.map(i=>`<div class="trade-prop ${tradeState.offerProps.includes(i)?'sel':''}" onclick="toggleTradeProp('offer',${i},this)">
+    <div class="tp-dot" style="background:${ZONES[G.tiles[i]?.zone]?.color||'#aaa'}"></div>
+    <span>${G.tiles[i]?.name}</span><span style="margin-left:auto;color:var(--muted);font-size:10px">₹${G.tiles[i]?.price}L</span>
+  </div>`).join('')||'<p style="color:var(--muted);font-size:12px">No properties</p>';
+  const theirProps=theirP.properties.map(i=>`<div class="trade-prop ${tradeState.wantProps.includes(i)?'sel':''}" onclick="toggleTradeProp('want',${i},this)">
+    <div class="tp-dot" style="background:${ZONES[G.tiles[i]?.zone]?.color||'#aaa'}"></div>
+    <span>${G.tiles[i]?.name}</span><span style="margin-left:auto;color:var(--muted);font-size:10px">₹${G.tiles[i]?.price}L</span>
+  </div>`).join('')||'<p style="color:var(--muted);font-size:12px">No properties</p>';
+  $('trade-body').innerHTML=`
+    <div class="trade-section"><h3>You Offer (${myP.name})</h3>${myProps}
+      <div class="inv-slider-wrap" style="margin-top:8px">
+        <label>Cash offer <b id="toc-lbl">₹0L</b></label>
+        <input type="range" min="0" max="${myP.cash}" step="1" value="${tradeState.offerCash}"
+          oninput="tradeState.offerCash=+this.value;$('toc-lbl').textContent='₹'+this.value+'L';updateTradeSummary()"/>
+      </div>
+    </div>
+    <div class="trade-section"><h3>You Want from ${theirP.name}</h3>${theirProps}
+      <div class="inv-slider-wrap" style="margin-top:8px">
+        <label>Cash request <b id="twc-lbl">₹0L</b></label>
+        <input type="range" min="0" max="${theirP.cash}" step="1" value="${tradeState.wantCash}"
+          oninput="tradeState.wantCash=+this.value;$('twc-lbl').textContent='₹'+this.value+'L';updateTradeSummary()"/>
+      </div>
+    </div>
+    <div class="trade-summary" id="trade-summary">Select properties and amounts above.</div>`;
+  $('trade-btns').innerHTML=`
+    <button class="btn btn-ghost" onclick="closeOv('ov-trade')">Cancel</button>
+    <button class="btn btn-gold" onclick="proposeTrade()">Propose Trade</button>`;
+  updateTradeSummary();
+}
+
+function toggleTradeProp(side,i,el){
+  const arr=side==='offer'?tradeState.offerProps:tradeState.wantProps;
+  const idx=arr.indexOf(i);
+  if(idx>=0)arr.splice(idx,1);else arr.push(i);
+  el.classList.toggle('sel');
+  updateTradeSummary();
+}
+
+function updateTradeSummary(){
+  const myP=G.players[G.currentPlayer];
+  const theirP=tradeState.targetPi>=0?G.players[tradeState.targetPi]:null;
+  if(!theirP)return;
+  const offerNames=tradeState.offerProps.map(i=>G.tiles[i]?.name).join(', ')||'—';
+  const wantNames=tradeState.wantProps.map(i=>G.tiles[i]?.name).join(', ')||'—';
+  const el=$('trade-summary');if(!el)return;
+  el.innerHTML=`<b style="color:var(--text)">${myP.name}</b> gives: ${offerNames} + ₹${tradeState.offerCash}L<br>
+    <b style="color:var(--text)">${theirP.name}</b> gives: ${wantNames} + ₹${tradeState.wantCash}L`;
+}
+
+function proposeTrade(){
+  if(tradeState.targetPi<0){toast('Select a player first');return;}
+  const myP=G.players[G.currentPlayer];
+  const theirP=G.players[tradeState.targetPi];
+  const offerNames=tradeState.offerProps.map(i=>G.tiles[i]?.name).join(', ')||'nothing';
+  const wantNames=tradeState.wantProps.map(i=>G.tiles[i]?.name).join(', ')||'nothing';
+  closeOv('ov-trade');
+  // If target is bot, auto-decide
+  if(theirP.isBot){
+    const botAccepts=Math.random()>0.35;
+    if(botAccepts){executeTrade();log(theirP.name+' (Bot) accepted the trade','t');}
+    else{log(theirP.name+' (Bot) declined the trade','r');toast(theirP.name+' declined the trade!');}
+    return;
+  }
+  // Show acceptance modal
+  showGen(`Trade Proposal from ${myP.name}`,
+    `<div class="trade-summary" style="margin-bottom:8px">
+      <b style="color:var(--text)">${myP.name}</b> offers: ${offerNames} + ₹${tradeState.offerCash}L<br>
+      In exchange for: ${wantNames} + ₹${tradeState.wantCash}L from <b style="color:var(--text)">${theirP.name}</b>
+    </div>`,
+    [{label:'Accept',cls:'btn-gold',fn:()=>{executeTrade();closeOv('ov-gen');}},
+     {label:'Decline',cls:'btn-danger',fn:()=>{log(theirP.name+' declined the trade','r');toast(theirP.name+' declined!');closeOv('ov-gen');}}]);
+}
+
+function executeTrade(){
+  const myP=G.players[G.currentPlayer];
+  const theirP=G.players[tradeState.targetPi];
+  // Cash exchange
+  myP.cash=Math.max(0,myP.cash-tradeState.offerCash)+tradeState.wantCash;
+  theirP.cash=Math.max(0,theirP.cash-tradeState.wantCash)+tradeState.offerCash;
+  // Property exchange
+  tradeState.offerProps.forEach(i=>{
+    G.tiles[i].owner=tradeState.targetPi;
+    myP.properties=myP.properties.filter(x=>x!==i);
+    theirP.properties.push(i);
+  });
+  tradeState.wantProps.forEach(i=>{
+    G.tiles[i].owner=G.currentPlayer;
+    theirP.properties=theirP.properties.filter(x=>x!==i);
+    myP.properties.push(i);
+  });
+  log(`Trade done: ${myP.name} ↔ ${theirP.name}`,'t');
+  toast('Trade completed!');
+  updateNW();refreshBoard();renderPlayers();
+}
+
+function openForceTrade(pi){
+  // Business Magnate: force trade on any one property
+  const available=[];
+  G.players.forEach((pl,i)=>{if(i!==pi)pl.properties.forEach(j=>available.push({pi:i,ti:j}));});
+  if(!available.length){showGen('No Properties','No properties to force trade on.',[]);return;}
+  const opts=available.slice(0,8).map(({pi:opi,ti})=>({
+    label:`${G.tiles[ti].name} (${G.players[opi].name}) — ₹${G.tiles[ti].price}L`,
+    cls:'btn-gold',
+    fn:()=>{
+      const cost=Math.round(G.tiles[ti].price*0.8);
+      const buyer=G.players[pi];
+      if(buyer.cash<cost){toast('Need ₹'+cost+'L');return;}
+      buyer.cash-=cost;G.players[opi].cash+=cost;
+      G.players[opi].properties=G.players[opi].properties.filter(x=>x!==ti);
+      G.tiles[ti].owner=pi;buyer.properties.push(ti);
+      log('Business Magnate force-bought '+G.tiles[ti].name+' from '+G.players[opi].name+' for ₹'+cost+'L','p');
+      closeOv('ov-gen');updateNW();refreshBoard();renderPlayers();
+    }
+  }));
+  showGen('Force Trade','Choose a property to force buy at 80% market value:',opts);
+}
+
+// ═══════════════════════════════════════════
+// INVEST SYSTEM
+// ═══════════════════════════════════════════
+function openInvest(){
+  const investableProps=[];
+  G.players.forEach((pl,pi)=>{
+    if(pi===G.currentPlayer)return;
+    pl.properties.forEach(ti=>{
+      const tile=G.tiles[ti];
+      const invs=tile.investors||[];
+      if(invs.length<3&&!invs.some(x=>x.pi===G.currentPlayer))
+        investableProps.push({pi,ti});
+    });
+  });
+  if(!investableProps.length){showGen('No Properties','No investable properties available. Properties can have max 3 investors.',[]);return;}
+  let selectedTile=null,selectedPct=20;
+  const opts=investableProps.slice(0,8).map(({pi,ti})=>`
+    <div class="trade-prop" onclick="selectInvestTile(${ti},this)" data-ti="${ti}">
+      <div class="tp-dot" style="background:${G.players[pi].color}"></div>
+      <span>${G.tiles[ti].name}</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted)">${G.players[pi].name} · ₹${G.tiles[ti].price}L</span>
+    </div>`).join('');
+  $('inv-body').innerHTML=`<div class="trade-section"><h3>Choose Property to Invest In</h3>${opts}</div>
+    <div class="trade-section" id="inv-pct-section" style="display:none">
+      <h3>Investment Amount</h3>
+      <div class="inv-slider-wrap">
+        <label>Ownership share <b id="inv-pct-lbl">20%</b></label>
+        <input type="range" min="5" max="30" step="5" value="20" id="inv-pct-range"
+          oninput="selectedPct=+this.value;$('inv-pct-lbl').textContent=this.value+'%';updateInvSummary(selectedTile,+this.value)"/>
+      </div>
+      <div id="inv-summary" class="trade-summary" style="margin-top:8px"></div>
+    </div>`;
+  $('inv-btns').innerHTML=`<button class="btn btn-ghost" onclick="closeOv('ov-invest')">Cancel</button>
+    <button class="btn btn-gold" id="inv-confirm-btn" disabled onclick="confirmInvest()">Confirm Investment</button>`;
+  // expose to onclick
+  window.selectedTile=null;window.selectedPct=20;
+  openOv('ov-invest');
+}
+function selectInvestTile(ti,el){
+  document.querySelectorAll('#inv-body .trade-prop').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  window.selectedTile=ti;
+  $('inv-pct-section').style.display='block';
+  updateInvSummary(ti,window.selectedPct||20);
+  $('inv-confirm-btn').disabled=false;
+}
+function updateInvSummary(ti,pct){
+  if(ti==null)return;
+  const tile=G.tiles[ti];
+  const owner=G.players[tile.owner];
+  const cost=Math.round(tile.price*(pct/100));
+  const incomeShare=Math.round(tile.rent[tile.level||0]*(pct/100));
+  const el=$('inv-summary');if(!el)return;
+  el.innerHTML=`Cost: ₹${cost}L for ${pct}% of ${tile.name}<br>
+    Expected rent share: ₹${incomeShare}L per visit<br>
+    Owner: ${owner?.name} (keeps ${100-pct}% minimum)`;
+}
+function confirmInvest(){
+  const ti=window.selectedTile;const pct=window.selectedPct||20;
+  if(ti==null)return;
+  const tile=G.tiles[ti];const p=G.players[G.currentPlayer];
+  const cost=Math.round(tile.price*(pct/100));
+  // owner must keep min 40%
+  const existingInvPct=(tile.investors||[]).reduce((s,x)=>s+x.pct,0);
+  if(existingInvPct+pct>60){toast('Owner must keep at least 40%!');return;}
+  if(p.cash<cost){toast('Need ₹'+cost+'L');return;}
+  if(!tile.investors)tile.investors=[];
+  if(tile.investors.length>=3){toast('Max 3 investors per property');return;}
+  p.cash-=cost;
+  tile.investors.push({pi:G.currentPlayer,pct,lockTurns:3});
+  tile.ownerPct=100-existingInvPct-pct;
+  // pay cost to owner
+  G.players[tile.owner].cash+=cost;
+  p.investmentsIn.push(ti);
+  log(p.name+' invested '+pct+'% in '+tile.name+' for ₹'+cost+'L','g');
+  toast('Investment confirmed!');
+  closeOv('ov-invest');updateNW();renderPlayers();
+}
+
+// ═══════════════════════════════════════════
+// END TURN
+// ═══════════════════════════════════════════
+function doEndTurn(){
+  if(!G.rolled)return;
+  const p=G.players[G.currentPlayer];
+  // Loan tick
+  if(p.loan>0){
+    p.loanTurns--;
+    if(p.loanTurns<=0){
+      const due=Math.round(p.loan*1.2);
+      if(p.cash>=due){p.cash-=due;p.loan=0;p.loanCount=Math.max(0,(p.loanCount||1)-1);log(p.name+' repaid loan ₹'+due+'L','n');}
+      else{
+        // Seize most expensive property
+        if(p.properties.length>0){
+          const seized=p.properties.reduce((a,b)=>(G.tiles[b]?.price||0)>(G.tiles[a]?.price||0)?b:a);
+          G.tiles[seized].owner=undefined;G.tiles[seized].investors=[];G.tiles[seized].ownerPct=100;
+          p.properties=p.properties.filter(x=>x!==seized);
+          log(p.name+' loan default — '+G.tiles[seized].name+' seized','r');
+        }
+        p.loan=0;p.loanCount=Math.max(0,(p.loanCount||1)-1);
+      }
+    }
+  }
+  // Local Landlord passive: +₹1L per turn from interior zones
+  if(p.role?.name==='Local Landlord'){
+    const interiorProps=p.properties.filter(i=>G.tiles[i]&&(G.tiles[i].zone===10||G.tiles[i].zone===11));
+    if(interiorProps.length>0){p.cash+=interiorProps.length;log(p.name+' (Landlord) +₹'+interiorProps.length+'L passive','p');}
+  }
+  // Business Magnate passive: +₹2L if 5+ properties
+  if(p.role?.name==='Business Magnate'&&p.properties.length>=5){
+    p.cash+=2;log(p.name+' (Magnate) +₹2L bonus (5+ properties)','p');
+  }
+  // Land freeze ends
+  G.landFreeze=false;
+  G.rolled=false;
+  G.turnCount++;
+  // Reset buttons
+  ['b-buy','b-upg','b-loan','b-trade','b-invest','b-endturn'].forEach(id=>$(id).disabled=true);
+  $('b-roll').disabled=false;
+  $('d1').textContent='?';$('d2').textContent='?';$('dtot').textContent='—';
+  $('tinfo').style.display='none';
+  // Next player
+  let next=(G.currentPlayer+1)%G.players.length;
+  if(G.players[next].skipTurn){G.players[next].skipTurn=false;log(G.players[next].name+' skip turn','n');next=(next+1)%G.players.length;}
+  G.currentPlayer=next;
+  updateNW();renderAll();
+  const cp=G.players[G.currentPlayer];
+  log('Turn: '+cp.name,'n');
+  $('g-turn-chip').textContent='Turn: '+cp.name;
+  checkWin();
+  if(cp.isBot) setTimeout(()=>doRoll(),700);
+}
+
+// ═══════════════════════════════════════════
+// BOT AI
+// ═══════════════════════════════════════════
+function botPlay(){
+  const p=G.players[G.currentPlayer];
+  if(!p.isBot)return;
+  const tile=G.tiles[p.pos];
+  // Buy if can afford and tile is buyable
+  if(tile.owner==null&&tile.price&&p.cash>=tile.price&&!G.landFreeze) doBuy();
+  // Upgrade if owns and has cash
+  else if(tile.owner===G.currentPlayer&&tile.level<3){
+    const cost=Math.round(tile.price*0.5);
+    if(p.cash>=cost) doUpgrade();
+  }
+  setTimeout(doEndTurn,600);
+}
+
+// ═══════════════════════════════════════════
+// WIN CHECK
+// ═══════════════════════════════════════════
+function checkWin(){
+  const winner=G.players.find(p=>p.netWorth>=100);
+  // Also check bankruptcy (cash < 0 and no properties)
+  const bankrupt=G.players.filter(p=>p.cash<=0&&p.properties.length===0&&p.loan<=0);
+  if(winner||bankrupt.length===G.players.length-1) endGame(winner);
+}
+function endGame(winner){
+  const sorted=[...G.players].sort((a,b)=>b.netWorth-a.netWorth);
+  $('win-title').textContent=winner?winner.name+' Wins!':'Game Over!';
+  $('win-sub').textContent=winner?winner.role?.icon+' '+winner.role?.name+' — ₹'+winner.netWorth+'L Net Worth':'Nobody reached ₹100L — highest net worth wins!';
+  const board=$('win-board');board.innerHTML='';
+  sorted.forEach((p,i)=>{
+    const card=document.createElement('div');
+    card.className='win-card'+(i===0?' winner':'');
+    card.innerHTML=`<div class="wc-pos">${['🥇','🥈','🥉','4th','5th','6th'][i]}</div>
+      <div class="wc-name" style="color:${p.color}">${p.emoji} ${p.name}</div>
+      <div class="wc-role">${p.role?.icon} ${p.role?.name}</div>
+      <div class="wc-nw">₹${p.netWorth}L</div>`;
+    board.appendChild(card);
+  });
+  $('win-screen').classList.add('open');
+}
+function resetGame(){
+  $('win-screen').classList.remove('open');
+  G={roomCode:'',players:[],tiles:[],currentPlayer:0,rolled:false,turnCount:0,landFreeze:false,investments:{}};
+  myIdx=0;
+  $('host-form').style.display='block';$('host-room').style.display='none';
+  $('h-name').value='';
+  showScreen('s-lobby');
+}
+
+// ═══════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════
+function renderAll(){renderPlayers();renderActions();refreshBoard();}
+
+function renderPlayers(){
+  const panel=$('sp-players');panel.innerHTML='';
+  // Zone legend
+  const leg=document.createElement('div');leg.className='zleg';
+  ZONES.forEach(z=>{
+    const d=document.createElement('div');d.className='zli';
+    d.innerHTML=`<div class="zlid" style="background:${z.color}"></div>${z.name}`;
+    leg.appendChild(d);
+  });
+  panel.appendChild(leg);
+  G.players.forEach((p,i)=>{
+    const dom=p.netWorth>=50,risk=p.loan>0&&p.cash<5,grow=p.netWorth>=25,bank=p.cash<=0&&p.properties.length===0;
+    const sc=bank?'b-bank':dom?'b-dom':risk?'b-risk':grow?'b-grow':'b-ok';
+    const sl=bank?'Bankrupt':dom?'Dominating':risk?'At Risk':grow?'Growing':'Stable';
+    const div=document.createElement('div');
+    div.className='pc'+(i===G.currentPlayer?' myturn':'')+(i===myIdx?' mine':'');
+    div.innerHTML=`<div class="pc-top">
+        <div class="pc-av" style="background:${p.color};color:#000">${p.emoji}</div>
+        <div><div class="pc-n">${p.name}</div><div class="pc-r">${p.role?.icon||''} ${p.role?.name||'—'}</div></div>
+        ${i===G.currentPlayer?'<div style="margin-left:auto;font-size:9px;background:var(--gold);color:#000;padding:2px 7px;border-radius:4px;font-weight:800">TURN</div>':''}
+      </div>
+      <div class="pc-grid">
+        <div class="pstat"><div class="psl">Cash</div><div class="psv g">₹${p.cash}L</div></div>
+        <div class="pstat"><div class="psl">Net Worth</div><div class="psv o">₹${p.netWorth}L</div></div>
+        <div class="pstat"><div class="psl">Properties</div><div class="psv">${p.properties.length}</div></div>
+        <div class="pstat"><div class="psl">Loan</div><div class="psv r">${p.loan>0?'₹'+p.loan+'L ('+p.loanTurns+'t)':'None'}</div></div>
+      </div>
+      ${p.festivalTurns>0?`<div class="badge" style="background:#1a1200;color:var(--gold);border:1px solid var(--gold2)">Festival Boost x2 (${p.festivalTurns}t)</div>`:''}
+      <div class="badge ${sc}">${sl}</div>`;
+    panel.appendChild(div);
+  });
+}
+
+function renderActions(){
+  const cp=G.players[G.currentPlayer];
+  $('act-turn').textContent=cp?.name||'—';
+  $('b-roll').disabled=G.rolled;
+  const ab=$('b-ability');
+  if(cp&&G.currentPlayer===myIdx&&!cp.abilityUsed){
+    ab.disabled=false;$('b-ability-txt').textContent=cp.role?.icon+' Use Ability';
+  } else {ab.disabled=true;}
+}
+
+function selectTile(i){
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('hl-sel'));
+  const tEl=$('tile-'+i);if(tEl)tEl.classList.add('hl-sel');
+  const t=G.tiles[i];
+  $('tinfo').style.display='block';
+  stab('actions',document.querySelectorAll('.stab')[1]);
+  const rows=[
+    ['Name',t.name],
+    ['Type',t.type],
+    t.zone>=0?['Zone',ZONES[t.zone]?.name]:null,
+    t.price?['Price','₹'+t.price+'L']:null,
+    t.level!=null?['Level',['Land','Basic','Developed','Mega'][t.level||0]]:null,
+    t.rent?['Rent levels','₹'+t.rent.join('L / ₹')+'L']:null,
+    ['Owner',t.owner!=null?G.players[t.owner]?.name:'Available'],
+    t.investors?.length?['Investors',t.investors.map(x=>G.players[x.pi]?.name+' '+x.pct+'%').join(', ')]:null,
+  ].filter(Boolean);
+  $('tinfo-rows').innerHTML=rows.map(([k,v])=>`<div class="tinfo-row"><span>${k}</span><span style="color:${t.owner!=null?G.players[t.owner]?.color:t.owner==null&&t.price?'var(--green)':'var(--text)'}">${v}</span></div>`).join('');
+}
+
+function stab(name,el){
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
+  if(el)el.classList.add('on');
+  $('sp-'+name).classList.add('on');
+}
+
+function updateNW(){
+  G.players.forEach(p=>{
+    const pv=p.properties.reduce((s,i)=>s+(G.tiles[i]?.price||0),0);
+    p.netWorth=Math.max(0,p.cash+pv-p.loan);
+  });
+}
+
+function quitGame(){
+  if(confirm('Quit the game?')) resetGame();
+}
+
+// init
+document.addEventListener('DOMContentLoaded',()=>{
+  $('h-name').value='Gerwin';
+});
+</script>
+</body>
+</html>
